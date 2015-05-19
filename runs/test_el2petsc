@@ -1,0 +1,33 @@
+#!/bin/bash
+module load impi
+
+EMAIL=sameer@ices.utexas.edu
+N=500000
+NODES=1
+PRINT=false
+
+for TASKS_PER_NODE in 10 
+do
+TOT_TASKS=$((NODES*TASKS_PER_NODE))
+for SIZE in 10000 100000 1000000
+do
+cat <<EOS | sbatch
+#!/bin/bash
+#SBATCH -J $TASKS_PER_NODE.$NODES          # job name
+#SBATCH -o el2psc.n$NODES.t$TASKS_PER_NODE.s$SIZE.out       # output and error file name (%j expands to jobID)
+#SBATCH -n $TOT_TASKS          # total number of mpi tasks requested
+#SBATCH -N $NODES          # total number of nodes (2 sockets / node)
+#SBATCH -p gpu             # queue (partition) -- normal, development, etc.
+#SBATCH -t 00:02:00        # run time (hh:mm:ss) - 1.5 hours
+#SBATCH -A PADAS           # Project
+#SBATCH --mail-user=$EMAIL
+##SBATCH --mail-type=end    # email me when the job finishes
+
+
+cd ${WORK}/research/el2petsc
+ibrun ./test_funcs.exe --N $SIZE --p $PRINT
+
+EOS
+
+done #RANK for loop
+done #TASKS_PER_NODE for loop
