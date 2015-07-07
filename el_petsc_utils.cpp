@@ -91,7 +91,7 @@ void El2Petsc_vec(El::DistMatrix<double,VC,STAR>& el_vec,Vec& pt_vec){
 		std::cout << "Recv disps: " <<std::endl << recv_disps <<std::endl;
 	}
 	
-	// Allocate the memory? just so we only do it once
+	// Reorder for petsc
 	for(int p=0;p<rq;p++){
 		int base_idx = (p - pstart + rq) % rq;
 		int offset = recv_disps[p];
@@ -99,7 +99,6 @@ void El2Petsc_vec(El::DistMatrix<double,VC,STAR>& el_vec,Vec& pt_vec){
 			pt_array[base_idx + rq*i] = recv_data[offset + i];
 		}
 	}
-	if(print){std::cout <<"here?"<<std::endl;}
 
 	// Copy into array
 	VecRestoreArray(pt_vec,&pt_array);
