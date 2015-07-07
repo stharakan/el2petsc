@@ -2,9 +2,8 @@
 module load impi
 
 EMAIL=sameer@ices.utexas.edu
-N=500000
 NODES=1
-PRINT=false
+PRINT=true
 
 for TASKS_PER_NODE in 10 
 do
